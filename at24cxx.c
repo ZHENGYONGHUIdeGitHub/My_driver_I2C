@@ -16,12 +16,15 @@ static int at24cxx_detach(struct i2c_client *client);
 
 static unsigned short ignore[]  =   { I2C_CLIENT_END };
 static unsigned short normal_addr[] =   {0x50, I2C_CLIENT_END};
+static unsigned short forces_addr[] =   { ANY_I2C_BUS, 0x60, I2C_CLIENT_END };
+static unsigned short *forces[]     =   {  forces_addr, NULL};
 
 /*******************************************************************************/
 static struct i2c_client_address_data addr_data = {
-    .normal_i2c = normal_addr,
+    .normal_i2c = ignore,
     .probe      = ignore,
     .ignore     = ignore,
+    .forces     = forces,
 };
 
 
