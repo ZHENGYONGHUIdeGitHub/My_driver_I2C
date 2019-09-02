@@ -117,7 +117,7 @@ static void at24cxx_exit(void)
 module_init(at24cxx_init);
 module_exit(at24cxx_exit);
 
-MODULE_LICENSE("GPL");;;;
+MODULE_LICENSE("GPL");
 
 
 
