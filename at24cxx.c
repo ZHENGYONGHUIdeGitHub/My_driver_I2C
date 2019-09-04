@@ -10,6 +10,7 @@
 /******************************************************************************/
 static int major;
 static struct class *cls;
+struct i2c_client *at24cxx_client;
 
 /******************************************************************************/
 static int at24cxx_detect(struct i2c_adapter *adapter, int address, int kind);
@@ -55,14 +56,14 @@ static struct file_operations at24cxx_fops = {
 static int at24cxx_detect(struct i2c_adapter *adapter, int address, int kind)
 {
 
-    struct i2c_client *new_client;
+    
     printk("at24cxx_detect\r\n");
-    new_client  = kzalloc(sizeof(struct i2c_client),  GFP_KERNEL);
-    new_client->addr    =   address;
-    new_client->adapter =   adapter;
-    new_client->driver  =   &at24cxx_driver;
-    strcpy(new_client->name, "at24cxx");
-    i2c_attach_client(new_client);
+    at24cxx_client  = kzalloc(sizeof(struct i2c_client),  GFP_KERNEL);
+    at24cxx_client->addr    =   address;
+    at24cxx_client->adapter =   adapter;
+    at24cxx_client->driver  =   &at24cxx_driver;
+    strcpy(at24cxx_client->name, "at24cxx");
+    i2c_attach_client(at24cxx_client);
 
     
     major   =   register_chrdev(0, "at24cxx", &at24cxx_fops);
@@ -81,6 +82,14 @@ static int at24cxx_detach(struct i2c_client *client)
 {
 
     printk("at24cxx_detach!\r\n");
+    
+    class_device_destroy(cls,  MKDEV(major, 0));
+    class_destroy(cls);
+
+    unregister_chrdev(major, "at24cxx");
+    i2c_detach_client(at24cxx_client);
+    kfree(at24cxx_client);
+    
     return 0;
 }
 
